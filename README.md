@@ -10,7 +10,7 @@ Installation
 
 ```sh
 cd ~/Documents
-git clone https://github.com/midchildan/dotfiles.git
+git clone https://github.com/shimayu/dotfiles.git
 cd dotfiles
 git branch --track local
 git worktree add ~/.config/dotfiles local
@@ -22,7 +22,7 @@ cd ~/.config/dotfiles
 
 ```sh
 cd ~/Documents
-git clone https://github.com/midchildan/dotfiles.git
+git clone https://github.com/shimayu/dotfiles.git
 cd dotfiles
 git checkout osx
 git branch --track local
