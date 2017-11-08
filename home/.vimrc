@@ -5,7 +5,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'altercation/vim-colors-solarized'
 Plug 'easymotion/vim-easymotion'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'deton/jasegment.vim'
 Plug 'fatih/vim-go', {'for': 'go'}
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-peekaboo'
@@ -19,7 +18,6 @@ Plug 'rdnetto/YCM-generator', {'branch': 'stable',
   \ 'on': ['YcmGenerateConfig', 'CCGenerateConfig']}
 Plug 'rust-lang/rust.vim', {'for': 'rust'}
 Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
-Plug 'scrooloose/syntastic'
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'tomasr/molokai'
 Plug 'tpope/vim-fugitive'
@@ -27,6 +25,7 @@ Plug 'tpope/vim-surround'
 Plug 'Valloric/YouCompleteMe', {
   \ 'do': './install.py --clang-completer'}
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
+Plug 'w0rp/ale'
 " filetype plugin indent and syntax is handled by plug#end
 call plug#end()
 
@@ -44,7 +43,14 @@ set expandtab
 set shiftwidth=2
 set softtabstop=2
 set autoindent
-set linebreak
+
+" swap leader key (\) and space
+let mapleader="\<Space>"
+noremap \ <Space>
+
+imap <C-x><C-x><C-f> <Plug>(fzf-complete-path)
+imap <C-x><C-x><C-k> <Plug>(fzf-complete-word)
+imap <C-x><C-x><C-l> <Plug>(fzf-complete-line)
 
 """"""""
 "  UI  "
@@ -61,14 +67,24 @@ set showmatch
 set wildmenu
 set title
 set mouse=a
-if $TERM =~? '.*-256color' && $TERM_PROGRAM !~? 'Apple_Terminal'
+
+" colors
+if $TERM =~? '.*-256color' && $TERM_PROGRAM !=? 'Apple_Terminal'
   set cursorline
   set termguicolors
   colorscheme molokai
+  if !has('nvim') && $TERM ==? 'screen-256color'
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  endif
 endif
 if has('nvim')
   set inccommand=split
 endif
+
+" show extra whitespace
+hi link ExtraWhitespace Error
+au Syntax * syn match ExtraWhitespace /\s\+$\| \+\ze\t/
 
 """"""""""""
 "  Search  "
@@ -102,8 +118,8 @@ endfor
 let g:tex_flavor='latex'
 
 " QuickFix "
-au QuickfixCmdPost [^lA-Z]* cwindow
-au QuickfixCmdPost l* lwindow
+au QuickfixCmdPost [^lA-Z]* botright cwindow
+au QuickfixCmdPost l* botright lwindow
 if executable('rg')
   set grepprg=rg\ --vimgrep\ --hidden
 endif
@@ -115,13 +131,6 @@ command! -bang -nargs=* Grep
 " EasyMotion"
 let g:EasyMotion_use_migemo=1
 
-" Syntastic "
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_check_on_open=1
-let g:syntastic_check_on_wq=0
-let g:syntastic_go_checkers=['golint', 'govet', 'errcheck']
-let g:syntastic_mode_map={'mode': 'active', 'passive_filetypes': ['go']}
-
 " UltiSnips "
 let g:UltiSnipsUsePythonVersion=2
 let g:UltiSnipsExpandTrigger='<C-x><C-j>'
@@ -132,10 +141,13 @@ let g:ycm_key_list_select_completion=[]
 let g:ycm_key_list_previous_completion=[]
 let g:ycm_key_invoke_completion=''
 let g:ycm_global_ycm_extra_conf='~/.vim/ycm_extra_conf.py'
+let g:ycm_rust_src_path='~/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src'
 
 " airline "
-let g:airline_theme='monochrome'
 let g:airline_skip_empty_sections=1
+if $USE_POWERLINE
+  let g:airline_powerline_fonts=1
+endif
 
 " undotree "
 let g:undotree_WindowLayout=2

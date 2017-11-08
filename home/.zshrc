@@ -7,13 +7,15 @@ autoload -Uz add-zsh-hook
 export CLICOLOR=1
 export GEM_HOME="$(/usr/local/bin/ruby -e 'print Gem.user_dir')"
 export GPG_TTY="$(tty)"
+export USE_POWERLINE=0
 
 typeset -U path
 path=(
-  "$HOME/.local/bin"
-  "/usr/local/opt/python/libexec/bin"
-  "/usr/local/sbin"
+  ~/.local/bin
+  /usr/local/opt/python/libexec/bin
+  /usr/local/sbin
   $path
+  ~/.cargo/bin
   "$GEM_HOME/bin"
   "$(/usr/local/bin/python2 -c 'import site; print(site.getuserbase())')/bin"
   "$(/usr/local/bin/python3 -c 'import site; print(site.getuserbase())')/bin"
@@ -35,6 +37,7 @@ alias sudoedit='sudo -e'
 autoload -Uz edit-command-line
 autoload -Uz run-help run-help-git run-help-openssl run-help-sudo
 autoload -Uz zmv
+autoload -Uz fzf-sel fzf-run fzf-loop fzf-gen
 
 #################
 #  Directories  #
@@ -81,7 +84,8 @@ zstyle ':completion:*:*:kill:*:processes' list-colors \
 zstyle ':completion:*:*:*:*:processes' \
   command "ps -u `whoami` -o pid,user,comm -w -w"
 
-autoload -Uz compinit && compinit -i
+# skip the slooow security checks (-C), it's pointless in a single-user setup
+autoload -Uz compinit && compinit -C
 
 #################
 #  Keybindings  #
@@ -93,6 +97,7 @@ autoload -Uz fzf-complete && zle -N fzf-complete
 autoload -Uz fzf-cd-widget && zle -N fzf-cd-widget
 autoload -Uz fzf-file-widget && zle -N fzf-file-widget
 autoload -Uz fzf-history-widget && zle -N fzf-history-widget
+autoload -Uz fzf-snippet-expand && zle -N fzf-snippet-expand
 autoload -Uz surround \
   && zle -N delete-surround surround \
   && zle -N add-surround surround \
@@ -111,6 +116,7 @@ bindkey -v \
   '^U' backward-kill-line \
   '^W' backward-kill-word \
   '^X^F' fzf-file-widget \
+  '^X^J' fzf-snippet-expand \
   '^X^R' fzf-history-widget \
   '^?' backward-delete-char
 bindkey -a \
@@ -170,6 +176,8 @@ fi
 #  Theme  #
 ###########
 setopt prompt_subst
+
+[[ -z "$TERM_PROGRAM" ]] && unset USE_POWERLINE
 
 if [[ "$TERM" == "dumb" ]]; then
   PROMPT="%n: %~%# "

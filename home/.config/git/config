@@ -6,3 +6,5 @@
 	default = simple
 [merge]
 	tool = vimdiff
+[alias]
+	exec = "!exec " # run a shell command from the top directory
