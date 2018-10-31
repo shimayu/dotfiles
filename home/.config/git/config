@@ -1,10 +1,11 @@
 [user]
 	name = shimayu
 	email = shima_yu_1993@sslab.ics.keio.ac.jp
-
 [push]
 	default = simple
 [merge]
 	tool = vimdiff
 [alias]
 	exec = "!exec " # run a shell command from the top directory
+[merge "ours"]
+	driver = true
