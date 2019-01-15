@@ -27,12 +27,39 @@ func! vimrc#fzf_compilers(is_buffer, bang)
   \}, a:bang))
 endf
 
+func! vimrc#toggle_show_whitespace()
+  if &list
+    if exists(':IndentLinesDisable')
+      IndentLinesDisable
+    endif
+    setlocal nolist nocursorcolumn list?
+  else
+    IndentLinesEnable
+    setlocal list cursorcolumn list?
+  endif
+endf
+
 func! vimrc#toggle_recursive_path()
   if index(split(&path, ','), '**') >= 0
     set path-=** path?
   else
     set path+=** path?
   endif
+endf
+
+func! vimrc#toggle_textwidth()
+  if !exists('s:textwidth')
+    let s:textwidth=80
+  endif
+
+  if &textwidth
+    let s:textwidth = &textwidth
+    let &textwidth = 0
+  else
+    let &textwidth = s:textwidth
+  endif
+
+  set textwidth?
 endf
 
 func! vimrc#toggle_virtualedit()
