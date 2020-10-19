@@ -34,6 +34,7 @@ Plug 'CoatiSoftware/vim-sourcetrail', {'for': ['c', 'cpp', 'cuda', 'java']}
 Plug 'majutsushi/tagbar', {'on': 'TagbarToggle'}
 Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
+Plug 'davidgranstrom/nvim-markdown-preview'
 
 " colorschemes
 Plug 'morhetz/gruvbox'
